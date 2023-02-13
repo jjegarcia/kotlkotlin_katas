@@ -4,28 +4,27 @@ fun main(args: Array<String>) {
     // Try adding program arguments via Run/Debug configuration.
     // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
 //    println(SeatingStudents(arrayOf(12, 1, 6, 9, 12)))
-    println(findLongestUnique("3aabacbebebe"))
+    println(findLongestUnique("2aabbcbbbadef"))
 }
 
 fun findLongestUnique(str: String): String {
-    val k = str[0].toInt() - 48
+    val k = str[0].code - 48
     val myString = str.subSequence(1, str.length)
     var candidate = ""
     var bundle = ""
     var newCandidate = ""
     myString.forEachIndexed { index, char ->
-        if (bundle.length <= k) newCandidate += char
+        newCandidate += char
         if (!bundle.contains(char)) {
-            if (bundle.length == k) {
+            bundle += char
+            if (bundle.length == k + 1) {
                 val lastIndex = getLastIndex(newCandidate, bundle[0])
-                if (newCandidate.length > candidate.length) candidate = newCandidate
-                newCandidate = newCandidate.subSequence(lastIndex + 1, newCandidate.length) as String
-                bundle = bundle.subSequence(1, bundle.length) as String
+                newCandidate = newCandidate.subSequence(lastIndex + 1, newCandidate.length ) as String
+                bundle = bundle.subSequence(1, bundle.length - 1) as String
                 bundle += char
-            } else {
-                if (bundle.length < k) bundle += char
             }
         }
+        if (newCandidate.length > candidate.length) candidate = newCandidate
     }
     return candidate
 }
