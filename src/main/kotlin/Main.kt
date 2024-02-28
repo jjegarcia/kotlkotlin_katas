@@ -28,20 +28,23 @@ fun main(args: Array<String>) {
     val test2 = getMinimumItems(sortByFrequency(arrayOf(1, 3, 3, 3, 2)).toMutableList())
     val test3 = getMinimumItems(sortByFrequency(arrayOf(1, 2, 3, 3, 3)).toMutableList())
 
-    val test4 = processQueue(Queue(0, mutableListOf(2, 2, 3, 1)))
+    val test4 = processQueue(Queue(0, arrayOf(2, 2, 3, 1)))
 
 }
 
 
+data class Queue(val time: Int, val items: Array<Int>)
+data class MutableQueue(val time: Int, val items: MutableList<Int>)
 fun processQueue(queue: Queue): Queue {
     println(queue)
+    val mutableQueue = MutableQueue(queue.time, queue.items.toMutableList())
     if (queue.items.isEmpty()) return queue
-    queue.items.removeAt(0)
-    val newQueue = removeDueItems(queue)
-    return processQueue(queue.copy(items = newQueue.items, time = queue.time + 1))
+    mutableQueue.items.removeAt(0)
+    val newQueue = removeDueItems(mutableQueue.copy(items = mutableQueue.items))
+    return processQueue(queue.copy(items = newQueue.items.toTypedArray(), time = queue.time + 1))
 }
 
-private fun removeDueItems(queue: Queue): Queue {
+private fun removeDueItems(queue: MutableQueue): MutableQueue {
     val newItems = mutableListOf<Int>()
     queue.items.forEach { item ->
         if (item > queue.time + 1) {
@@ -209,5 +212,3 @@ data class Time(
     val string: String,
     val minutes: Int
 )
-
-data class Queue(val time: Int, val items: MutableList<Int>)
