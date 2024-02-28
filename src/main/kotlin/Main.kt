@@ -15,7 +15,40 @@ fun main(args: Array<String>) {
     // Try adding program arguments via Run/Debug configuration.
     // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
 //    println(SeatingStudents(arrayOf(12, 1, 6, 9, 12)))
-    println(findLongestUnique("2aabbcbbbadef"))
+//    println(findLongestUnique("2aabbcbbbadef"))
+
+    val array = arrayOf(1, 3, 2, 3, 3)
+    val map = getFrequencyMap(array)
+
+    val test = sortByFrequency(array)
+
+    val test0 = getMinimumItems(test.toMutableList())
+
+    val test1 = getMinimumItems(sortByFrequency(arrayOf(3, 3, 3, 1, 2)).toMutableList())
+    val test2 = getMinimumItems(sortByFrequency(arrayOf(1, 3, 3, 3, 2)).toMutableList())
+    val test3 = getMinimumItems(sortByFrequency(arrayOf(1, 2, 3, 3, 3)).toMutableList())
+
+    val test4 = processQueue(Queue(0, mutableListOf(2, 2, 3, 1)))
+
+}
+
+
+fun processQueue(queue: Queue): Queue {
+    println(queue)
+    if (queue.items.isEmpty()) return queue
+    queue.items.removeAt(0)
+    val newQueue = removeDueItems(queue)
+    return processQueue(queue.copy(items = newQueue.items, time = queue.time + 1))
+}
+
+private fun removeDueItems(queue: Queue): Queue {
+    val newItems = mutableListOf<Int>()
+    queue.items.forEach { item ->
+        if (item > queue.time + 1) {
+            newItems.add(item)
+        }
+    }
+    return queue.copy(items = newItems)
 }
 
 fun findLongestUnique(str: String): String {
@@ -134,8 +167,47 @@ fun factorial(n: Int): Int {
     } else n
 }
 
+fun getMinimumItems(items: MutableList<Int>): MutableList<Int> {
+    if (items.size < 2) return items
+    items.forEachIndexed { index, item ->
+        if (index < items.size - 1) {
+            if (item != items[index + 1]) {
+                items.removeAt(index)
+                items.removeAt(index)
+                return getMinimumItems(items)
+            }
+        }
+    }
+    return items
+}
+
+fun getFrequencyMap(arr: Array<Int>): Map<Int, Int> {
+    val frequencyMap = mutableMapOf<Int, Int>()
+    arr.forEach { item ->
+        if (frequencyMap.containsKey(item)) {
+            frequencyMap[item] = (frequencyMap[item] ?: 0) + 1
+        } else {
+            frequencyMap[item] = 1
+        }
+    }
+    return frequencyMap
+}
+
+fun sortByFrequency(arr: Array<Int>): Array<Int> {
+    val frequencyMap = getFrequencyMap(arr)
+    val sortedMap = frequencyMap.toList().sortedByDescending { (_, value) -> value }.toMap()
+    val sortedArray = mutableListOf<Int>()
+    sortedMap.forEach { (key, value) ->
+        for (i in 1..value) {
+            sortedArray.add(key)
+        }
+    }
+    return sortedArray.toTypedArray()
+}
+
 data class Time(
     val string: String,
     val minutes: Int
 )
 
+data class Queue(val time: Int, val items: MutableList<Int>)
