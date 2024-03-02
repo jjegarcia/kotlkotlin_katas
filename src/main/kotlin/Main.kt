@@ -9,6 +9,9 @@ sealed class Message(val divider: Int, val content: String) {
 //    object FizzBuzz : Message()
 }
 
+//class MyCode {
+//    var time = 0
+
 fun main(args: Array<String>) {
     println("Hello World!")
 
@@ -30,11 +33,43 @@ fun main(args: Array<String>) {
 
     val test4 = processQueue(Queue(0, arrayOf(2, 2, 3, 1)))
 
+    val test5 = candy(arrayOf(1, 0, 2))
+//        val test6 = candy2(arrayOf(1, 0, 2))
+    val test7 = findRequestsInQueue(arrayOf(2, 2, 3, 1))
+    val test8 = getMinimumFruits(fruits = arrayOf(1, 2, 3, 3, 3))
 }
 
+fun getMinimumFruits(fruits: Array<Int>): Int {
+    return getMinimumItems(sortByFrequency(fruits).toMutableList()).size
+}
+
+fun findRequestsInQueue(wait: Array<Int>): Array<Int> {
+    if (wait.isEmpty()) return arrayOf()
+    val time = 0
+    val requests = wait.toMutableList()
+    val newRequests = processRequests(requests, time)
+    return newRequests.toTypedArray()
+}
+
+fun processRequests(requests: MutableList<Int>, time: Int): MutableList<Int> {
+    requests.removeAt(0)
+    val newRequests = removeDueItems(requests, time)
+    return newRequests
+}
+
+fun removeDueItems(requests: MutableList<Int>, time: Int): MutableList<Int> {
+    val newRequests = mutableListOf<Int>()
+    requests.forEach { item ->
+        if (item > time + 1) {
+            newRequests.add(item)
+        }
+    }
+    return newRequests
+}
 
 data class Queue(val time: Int, val items: Array<Int>)
 data class MutableQueue(val time: Int, val items: MutableList<Int>)
+
 fun processQueue(queue: Queue): Queue {
     println(queue)
     val mutableQueue = MutableQueue(queue.time, queue.items.toMutableList())
@@ -52,6 +87,33 @@ private fun removeDueItems(queue: MutableQueue): MutableQueue {
         }
     }
     return queue.copy(items = newItems)
+}
+
+fun candy2(arr: Array<Int>): Int {
+    val candies = arr.map { 1 }.toMutableList()
+    arr.forEachIndexed() { index, item ->
+        candies[index] = Math.max(candies[index], candies[index + 1] + 1)
+    }
+    return 0
+}
+
+fun candy(arr: Array<Int>): Int {
+    val n = arr.size
+    val candies = IntArray(n)
+    for (i in 0 until n) {
+        candies[i] = 1
+    }
+    for (i in 1 until n) {
+        if (arr[i] > arr[i - 1]) {
+            candies[i] = candies[i - 1] + 1
+        }
+    }
+    for (i in n - 2 downTo 0) {
+        if (arr[i] > arr[i + 1]) {
+            candies[i] = Math.max(candies[i], candies[i + 1] + 1)
+        }
+    }
+    return candies.sum()
 }
 
 fun findLongestUnique(str: String): String {
@@ -212,3 +274,4 @@ data class Time(
     val string: String,
     val minutes: Int
 )
+
