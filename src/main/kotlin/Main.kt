@@ -35,26 +35,36 @@ fun main(args: Array<String>) {
 
     val test5 = candy(arrayOf(1, 0, 2))
 //        val test6 = candy2(arrayOf(1, 0, 2))
-    val test7 = findRequestsInQueue(arrayOf(2, 2, 3, 1))
+    val test99 = findRequestsInQueue(arrayOf(2, 2, 3, 1))
     val test8 = getMinimumFruits(fruits = arrayOf(1, 2, 3, 3, 3))
+
+
+    val test9 = diagonalDifference(arrayOf(arrayOf(1, 2, 3), arrayOf(4, 5, 6), arrayOf(9, 8, 9)))
+}
+
+fun findRequestsInQueue(arr: Array<Int>): Array<Int> {
+    if (arr.isEmpty()) return arrayOf()
+    var time = 0
+    var arr1 = arr
+    val sizeList = mutableListOf<Int>()
+    do {
+        sizeList.add(arr1.size)
+        arr1 = processRequests(arr1, time)
+        time += 1
+    } while (arr1.isNotEmpty())
+    sizeList.add(0)
+    return sizeList.toTypedArray()
 }
 
 fun getMinimumFruits(fruits: Array<Int>): Int {
     return getMinimumItems(sortByFrequency(fruits).toMutableList()).size
 }
 
-fun findRequestsInQueue(wait: Array<Int>): Array<Int> {
-    if (wait.isEmpty()) return arrayOf()
-    val time = 0
-    val requests = wait.toMutableList()
-    val newRequests = processRequests(requests, time)
+fun processRequests(requests: Array<Int>, time: Int): Array<Int> {
+    val requestList = requests.toMutableList()
+    requestList.removeAt(0)
+    val newRequests = removeDueItems(requestList, time)
     return newRequests.toTypedArray()
-}
-
-fun processRequests(requests: MutableList<Int>, time: Int): MutableList<Int> {
-    requests.removeAt(0)
-    val newRequests = removeDueItems(requests, time)
-    return newRequests
 }
 
 fun removeDueItems(requests: MutableList<Int>, time: Int): MutableList<Int> {
@@ -114,6 +124,21 @@ fun candy(arr: Array<Int>): Int {
         }
     }
     return candies.sum()
+}
+
+fun fizzBuzz2(n: Int) {
+    // Write your code here
+    for (i in 1..n) {
+        println(determineOutput(i))
+        //  println("t="+t++)
+    }
+}
+
+fun determineOutput(i: Int): String {
+    if (i % 3 == 0 && i.rem(5) == 0) return "FizzBuzz"
+    if (i.rem(3) == 0) return "Fizz"
+    if (i.rem(5) == 0) return "Buzz"
+    return i.toString()
 }
 
 fun findLongestUnique(str: String): String {
@@ -275,3 +300,12 @@ data class Time(
     val minutes: Int
 )
 
+fun diagonalDifference(arr: Array<Array<Int>>): Int {
+    var line1 = 0
+    var line2 = 0
+    for (i in 0..arr.size - 1) {
+        line1 += arr[i][i]
+        line2 += arr[arr.size - 1 - i][i]
+    }
+    return Math.abs(line1 - line2)
+}
